@@ -4,7 +4,8 @@ import { Loader, Placeholder } from 'rsuite';
 import { MdDeleteForever } from "react-icons/md";
 import { MdEdit } from "react-icons/md";
 import { IoMdPersonAdd } from "react-icons/io";
-import { FaChevronDown, FaSearch } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
+import NavBar from "./NavBar";
 
 interface User {
     first_name: string;
@@ -62,7 +63,18 @@ const User: React.FC = () => {
     };
 
     const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchQuery(e.target.value);
+        const query = e.target.value;
+        setSearchQuery(query);
+        if (query.trim() === "") {
+            setFilteredUsers(users);
+        } else {
+        const lowerCaseQuery = searchQuery.toLowerCase();
+        const results = users.filter(user =>
+            user.first_name.toLowerCase().includes(lowerCaseQuery) ||
+            user.last_name.toLowerCase().includes(lowerCaseQuery) ||
+            user.username.toLowerCase().includes(lowerCaseQuery)
+        );
+        setFilteredUsers(results);}
     };
 
     const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -73,17 +85,7 @@ const User: React.FC = () => {
         }));
     };
 
-    // Handle search functionality
-    const handleSearch = () => {
-        const lowerCaseQuery = searchQuery.toLowerCase();
-        const results = users.filter(user =>
-            user.first_name.toLowerCase().includes(lowerCaseQuery) ||
-            user.last_name.toLowerCase().includes(lowerCaseQuery) ||
-            user.username.toLowerCase().includes(lowerCaseQuery)
-        );
-        setFilteredUsers(results);
-    };
-    // Handle Add User
+    //  Add User function get triggered when user click on Add User button
     const handleAddUser = () => {
         if (editingIndex === null) {
             setUsers((prevUsers) => [...prevUsers, newUser]);
@@ -108,14 +110,14 @@ const User: React.FC = () => {
         setOpenForEdit(false);
     };
 
-    // Handle Edit User
+    // Edit the user
     const handleEditUser = (index: number) => {
         setOpenForEdit(true);
         setNewUser(filteredUsers[index]);
         setEditingIndex(index);
     };
 
-    // Handle Delete User
+    // Delete the User
     const handleDeleteUser = (index: number) => {
         const updatedUsers = users.filter((_, i) => i !== index);
         setFilteredUsers(updatedUsers);
@@ -124,10 +126,13 @@ const User: React.FC = () => {
 
     return (
         <>
-            <div style={{ padding: '32px' }}>
+            <div >
+                <NavBar />
                 <div>
-                    <h1 className={"text-center font-extrabold text-5xl text-black"}>User Data</h1>
-                    <div>
+                   
+                    <div className={"flex justify-between items-center mx-5 mt-3"}>
+                        
+                        <button onClick={() => setOpenForAdd(!openForAdd)} className={"flex justify-between items-center gap-3 bg-blue-200 hover:bg-blue-300 text-black text-xl font-semibold p-3 border border-gray-900 rounded-full cursor-pointer "}><IoMdPersonAdd width={50} height={50} /><span>Add User</span></button>
 
                         <div className="flex flex-col md:flex-row justify-between items-center gap-3 md:gap-0 mb-5 mt-4">
                             <div className="flex justify-between items-center gap-2">
@@ -138,21 +143,9 @@ const User: React.FC = () => {
                                     onChange={handleSearchInputChange}
                                     className="p-1 pl-3 border border-gray-800 rounded"
                                 />
-                                <FaSearch onClick={handleSearch} className="w-7 h-7 cursor-pointer" />
-                            </div>
-                            <div className={"flex justify-between items-center gap-2"}>
-                                <img
-                                    src="https://randomuser.me/api/portraits/men/75.jpg"
-                                    alt="User Profile"
-                                    className="w-11 h-11 rounded-full"
-                                />
-                                <div className="flex justify-center items-center gap-2 text-black text-xl">
-                                    <h4 className={"font-bold"}>Sandip Kumar Yadav</h4>
-                                    <FaChevronDown className={"text-2xl"} />
-                                </div>
+                                <FaSearch className="w-7 h-7 cursor-pointer text-gray-700" />
                             </div>
                         </div>
-                        <button onClick={() => setOpenForAdd(!openForAdd)} className={"flex justify-between items-center gap-3 bg-blue-200 hover:bg-blue-300 text-black text-xl font-semibold p-3 border border-gray-900 rounded-full cursor-pointer "}><IoMdPersonAdd width={50} height={50} /><span>Add User</span></button>
 
                     </div>
                 </div>
